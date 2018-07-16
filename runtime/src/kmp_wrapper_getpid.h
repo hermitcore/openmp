@@ -18,7 +18,9 @@
 
 // On Unix-like systems (Linux* OS and OS X*) getpid() is declared in standard
 // headers.
+#if !KMP_OS_HERMIT
 #include <sys/syscall.h>
+#endif
 #include <sys/types.h>
 #include <unistd.h>
 #if KMP_OS_DARWIN

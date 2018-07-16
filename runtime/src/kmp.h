@@ -55,7 +55,7 @@
 
 // Android does not have pthread_cancel.  Undefine KMP_CANCEL_THREADS if being
 // built on Android
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || KMP_OS_HERMIT
 #undef KMP_CANCEL_THREADS
 #endif
 
@@ -111,7 +111,7 @@ class kmp_stats_list;
 #endif
 #include "kmp_i18n.h"
 
-#define KMP_HANDLE_SIGNALS (KMP_OS_UNIX || KMP_OS_WINDOWS)
+#define KMP_HANDLE_SIGNALS ((KMP_OS_UNIX || KMP_OS_WINDOWS) && !KMP_OS_HERMIT)
 
 #include "kmp_wrapper_malloc.h"
 #if KMP_OS_UNIX
@@ -548,7 +548,9 @@ typedef int PACKED_REDUCTION_METHOD_T;
 #endif
 
 #if KMP_OS_UNIX
+#if !KMP_OS_HERMIT
 #include <dlfcn.h>
+#endif
 #include <pthread.h>
 #endif
 
@@ -1055,6 +1057,10 @@ extern kmp_uint64 __kmp_now_nsec();
 #define KMP_NEXT_WAIT 512U /* susequent number of spin-tests */
 #elif KMP_OS_NETBSD
 /* TODO: tune for KMP_OS_NETBSD */
+#define KMP_INIT_WAIT 1024U /* initial number of spin-tests   */
+#define KMP_NEXT_WAIT 512U /* susequent number of spin-tests */
+#elif KMP_OS_HERMIT
+/* TODO: tune for KMP_OS_HERMIT */
 #define KMP_INIT_WAIT 1024U /* initial number of spin-tests   */
 #define KMP_NEXT_WAIT 512U /* susequent number of spin-tests */
 #endif

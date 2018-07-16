@@ -70,8 +70,28 @@ void __kmp_i18n_catopen() {
   }
 } // func __kmp_i18n_catopen
 
+/* Dummy I18N for HermitCore that always loads the English string */
+#if KMP_OS_HERMIT
+#define KMP_I18N_OK
+
+void __kmp_i18n_do_catopen() {
+  status = KMP_I18N_ABSENT;
+}
+
+void __kmp_i18n_catclose() {
+  status = KMP_I18N_CLOSED;
+}
+
+char const *__kmp_i18n_catgets(kmp_i18n_id_t id) {
+  int section = get_section(id);
+  int number = get_number(id);
+  char const *message = __kmp_i18n_default_table.sect[section].str[number];
+
+  return message;
+}
+
 /* Linux* OS and OS X* part */
-#if KMP_OS_UNIX
+#elif KMP_OS_UNIX
 #define KMP_I18N_OK
 
 #include <nl_types.h>
@@ -710,7 +730,8 @@ static char *sys_error(int err) {
 
 #if (defined(__GLIBC__) && defined(_GNU_SOURCE)) ||                            \
     (defined(__BIONIC__) && defined(_GNU_SOURCE) &&                            \
-     __ANDROID_API__ >= __ANDROID_API_M__)
+     __ANDROID_API__ >= __ANDROID_API_M__) ||                                  \
+	KMP_OS_HERMIT
   // GNU version of strerror_r.
 
   char buffer[2048];

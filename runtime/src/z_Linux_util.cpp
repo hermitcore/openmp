@@ -27,7 +27,9 @@
 #endif
 #include <math.h> // HUGE_VAL.
 #include <sys/resource.h>
+#if !KMP_OS_HERMIT
 #include <sys/syscall.h>
+#endif
 #include <sys/time.h>
 #include <sys/times.h>
 #include <unistd.h>
@@ -851,7 +853,11 @@ void __kmp_create_worker(int gtid, kmp_info_t *th, size_t stack_size) {
 
   status =
       pthread_create(&handle, &thread_attr, __kmp_launch_worker, (void *)th);
+#if KMP_OS_HERMIT
+  if (status != 0) {
+#else
   if (status != 0 || !handle) { // ??? Why do we check handle??
+#endif
 #ifdef _POSIX_THREAD_ATTR_STACKSIZE
     if (status == EINVAL) {
       __kmp_fatal(KMP_MSG(CantSetWorkerStackSize, stack_size), KMP_ERR(status),
@@ -1357,9 +1363,11 @@ static void __kmp_atfork_child(void) {
 
 void __kmp_register_atfork(void) {
   if (__kmp_need_register_atfork) {
+#if !KMP_OS_HERMIT
     int status = pthread_atfork(__kmp_atfork_prepare, __kmp_atfork_parent,
                                 __kmp_atfork_child);
     KMP_CHECK_SYSFAIL("pthread_atfork", status);
+#endif
     __kmp_need_register_atfork = FALSE;
   }
 }
@@ -1713,10 +1721,15 @@ double __kmp_read_cpu_time(void) {
 
 int __kmp_read_system_info(struct kmp_sys_info *info) {
   int status;
+#if !KMP_OS_HERMIT
   struct rusage r_usage;
+#endif
 
   memset(info, 0, sizeof(*info));
 
+#if KMP_OS_HERMIT
+  status = 0;
+#else
   status = getrusage(RUSAGE_SELF, &r_usage);
   KMP_CHECK_SYSFAIL_ERRNO("getrusage", status);
 
@@ -1736,6 +1749,7 @@ int __kmp_read_system_info(struct kmp_sys_info *info) {
   info->nvcsw = r_usage.ru_nvcsw;
   // The number of times a context switch was forced
   info->nivcsw = r_usage.ru_nivcsw;
+#endif
 
   return (status != 0);
 }
@@ -1765,7 +1779,7 @@ static int __kmp_get_xproc(void) {
 
   int r = 0;
 
-#if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_NETBSD
+#if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_NETBSD || KMP_OS_HERMIT
 
   r = sysconf(_SC_NPROCESSORS_ONLN);
 
@@ -2011,7 +2025,7 @@ int __kmp_is_address_mapped(void *addr) {
     found = 1;
   }
 
-#elif KMP_OS_FREEBSD || KMP_OS_NETBSD
+#elif KMP_OS_FREEBSD || KMP_OS_NETBSD || KMP_OS_HERMIT
 
   // FIXME(FreeBSD, NetBSD): Implement this
   found = 1;

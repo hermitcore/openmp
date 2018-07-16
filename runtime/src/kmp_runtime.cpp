@@ -6267,6 +6267,7 @@ void __kmp_register_library_startup(void) {
   KA_TRACE(50, ("__kmp_register_library_startup: %s=\"%s\"\n", name,
                 __kmp_registration_str));
 
+#if !KMP_OS_HERMIT
   while (!done) {
 
     char *value = NULL; // Actual value of the environment variable.
@@ -6338,12 +6339,13 @@ void __kmp_register_library_startup(void) {
     KMP_INTERNAL_FREE((void *)value);
   }
   KMP_INTERNAL_FREE((void *)name);
-
+#endif
 } // func __kmp_register_library_startup
 
 void __kmp_unregister_library(void) {
 
   char *name = __kmp_reg_status_name();
+#if !KMP_OS_HERMIT
   char *value = __kmp_env_get(name);
 
   KMP_DEBUG_ASSERT(__kmp_registration_flag != 0);
@@ -6352,9 +6354,12 @@ void __kmp_unregister_library(void) {
     // Ok, this is our variable. Delete it.
     __kmp_env_unset(name);
   }
+#endif
 
   KMP_INTERNAL_FREE(__kmp_registration_str);
+#if !KMP_OS_HERMIT
   KMP_INTERNAL_FREE(value);
+#endif
   KMP_INTERNAL_FREE(name);
 
   __kmp_registration_flag = 0;
@@ -6481,7 +6486,13 @@ static void __kmp_do_serial_initialize(void) {
 
   // Three vars below moved here from __kmp_env_initialize() "KMP_BLOCKTIME"
   // part
+#if KMP_OS_HERMIT
+  // HermitCore is a single-address space, single-application operating systems
+  // => we could use an infinite blocktime
+  __kmp_dflt_blocktime = KMP_MAX_BLOCKTIME;
+#else
   __kmp_dflt_blocktime = KMP_DEFAULT_BLOCKTIME;
+#endif
 #if KMP_USE_MONITOR
   __kmp_monitor_wakeups =
       KMP_WAKEUPS_FROM_BLOCKTIME(__kmp_dflt_blocktime, __kmp_monitor_wakeups);
@@ -7644,7 +7655,7 @@ __kmp_determine_reduction_method(
 #if KMP_ARCH_X86_64 || KMP_ARCH_PPC64 || KMP_ARCH_AARCH64 || KMP_ARCH_MIPS64
 
 #if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_NETBSD || KMP_OS_WINDOWS ||       \
-    KMP_OS_DARWIN
+    KMP_OS_DARWIN || KMP_OS_HERMIT
 
     int teamsize_cutoff = 4;
 

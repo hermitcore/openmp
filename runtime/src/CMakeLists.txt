@@ -303,6 +303,10 @@ else()
 
   install(TARGETS omp ${LIBOMP_INSTALL_KIND} DESTINATION "${OPENMP_INSTALL_LIBDIR}")
 
+  if(${HERMIT})
+    install(FILES ../../libgomp.spec DESTINATION "${OPENMP_INSTALL_LIBDIR}")
+  endif()
+
   if(${LIBOMP_INSTALL_ALIASES})
     # Create aliases (symlinks) of the library for backwards compatibility
     set(LIBOMP_ALIASES "libgomp;libiomp5")
