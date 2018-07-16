@@ -32,6 +32,7 @@ cmake -DCMAKE_C_COMPILER=x86_64-hermit-gcc \
 make -j2 || exit 1
 checkinstall -D -y --exclude=build --pkggroup=main --maintainer=stefan@eonerc.rwth-aachen.de --pkgsource=https://hermitcore.org --pkgname=libomp-hermit-rs --pkgversion=5.0 --conflicts=libomp-hermit --pkglicense=MIT make install || exit 1
 
+cd ..
 mkdir -p tmp
-dpkg-deb -R libomp-hermit-rs_5.0-1_amd64.deb tmp
-rm -f libomp-hermit-rs_5.0-1_amd64.deb
+dpkg-deb -R build/libomp-hermit-rs_5.0-1_amd64.deb tmp
+rm -f build/libomp-hermit-rs_5.0-1_amd64.deb
