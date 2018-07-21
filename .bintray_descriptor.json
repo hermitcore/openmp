@@ -1,11 +1,11 @@
 {
      "package": {
-         "name": "libomp-hermit-rs",
+         "name": "libomp-hermit",
          "repo": "ubuntu",
          "subject": "hermitcore",
          "desc": "Cross-toolchain for HermitCore",
          "website_url": "https://hermitcore.org",
-         "issue_tracker_url": "https://github.com/hermitcore/libhermit-rs/issues",
+         "issue_tracker_url": "https://github.com/hermitcore/libhermit/issues",
          "vcs_url": "https://github.com/hermitcore/openmp.git",
          "github_use_tag_release_notes": false,
          "github_release_notes_file": "RELEASE",
@@ -22,7 +22,7 @@
 
      "files":
      [{
-       "includePattern": "../(libomp-hermit-rs_[^/]*deb$)", "uploadPattern": "$1",
+       "includePattern": "../(libomp-hermit[^/]*deb$)", "uploadPattern": "$1",
        "matrixParams": {
          "deb_distribution": "bionic",
          "deb_component": "main",

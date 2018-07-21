@@ -10,7 +10,7 @@ apt-get install -y --no-install-recommends checkinstall cmake || exit 1
 
 echo "deb [trusted=yes] http://dl.bintray.com/hermitcore/ubuntu bionic main" >> /etc/apt/sources.list
 apt-get -qq update || exit 1
-apt-get install -y --allow-unauthenticated binutils-hermit gcc-hermit-rs newlib-hermit-rs pte-hermit-rs || exit 1
+apt-get install -y --allow-unauthenticated binutils-hermit gcc-hermit newlib-hermit pte-hermit || exit 1
 export PATH=/opt/hermit/bin:$PATH
 
 mkdir build
@@ -30,9 +30,9 @@ cmake -DCMAKE_C_COMPILER=x86_64-hermit-gcc \
       || exit 1
 
 make -j2 || exit 1
-checkinstall -D -y --exclude=build --pkggroup=main --maintainer=stefan@eonerc.rwth-aachen.de --pkgsource=https://hermitcore.org --pkgname=libomp-hermit-rs --pkgversion=5.0 --conflicts=libomp-hermit --pkglicense=MIT make install || exit 1
+checkinstall -D -y --exclude=build --pkggroup=main --maintainer=stefan@eonerc.rwth-aachen.de --pkgsource=https://hermitcore.org --pkgname=libomp-hermit --pkgversion=5.0 --conflicts=libomp-hermit --pkglicense=MIT make install || exit 1
 
 cd ..
 mkdir -p tmp
-dpkg-deb -R build/libomp-hermit-rs_5.0-1_amd64.deb tmp
-rm -f build/libomp-hermit-rs_5.0-1_amd64.deb
+dpkg-deb -R build/libomp-hermit_5.0-1_amd64.deb tmp
+rm -f build/libomp-hermit_5.0-1_amd64.deb
