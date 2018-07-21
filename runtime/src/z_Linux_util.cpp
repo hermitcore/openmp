@@ -1927,7 +1927,15 @@ void __kmp_runtime_destroy(void) {
 
 /* Put the thread to sleep for a time period */
 /* NOTE: not currently used anywhere */
-void __kmp_thread_sleep(int millis) { sleep((millis + 500) / 1000); }
+void
+__kmp_thread_sleep( int millis )
+{
+#if KMP_OS_HERMIT
+    sys_msleep( millis );
+#else
+    sleep(  ( millis + 500 ) / 1000 );
+#endif
+}
 
 /* Calculate the elapsed wall clock time for the user */
 void __kmp_elapsed(double *t) {
