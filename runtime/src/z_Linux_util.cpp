@@ -1925,6 +1925,10 @@ void __kmp_runtime_destroy(void) {
   __kmp_init_runtime = FALSE;
 }
 
+#if KMP_OS_HERMIT
+extern "C" void sys_msleep(unsigned int ms);
+#endif
+
 /* Put the thread to sleep for a time period */
 /* NOTE: not currently used anywhere */
 void
