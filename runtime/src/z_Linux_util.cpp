@@ -1775,13 +1775,21 @@ void __kmp_clear_system_time(void) {
   TIMEVAL_TO_TIMESPEC(&tval, &__kmp_sys_timer_data.start);
 }
 
+#if KMP_OS_HERMIT
+extern "C" unsigned int get_num_cpus(void);
+#endif
+
 static int __kmp_get_xproc(void) {
 
   int r = 0;
 
-#if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_NETBSD || KMP_OS_HERMIT
+#if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_NETBSD
 
   r = sysconf(_SC_NPROCESSORS_ONLN);
+
+#elif KMP_OS_HERMIT
+
+  r = get_num_cpus();
 
 #elif KMP_OS_DARWIN
 
@@ -1842,6 +1850,11 @@ void __kmp_runtime_initialize(void) {
 
   __kmp_xproc = __kmp_get_xproc();
 
+#if KMP_OS_HERMIT
+    /* Unlimited threads for NPTL */
+    __kmp_sys_max_nth = INT_MAX;
+    __kmp_sys_min_stksize = KMP_MIN_STKSIZE;
+#else
   if (sysconf(_SC_THREADS)) {
 
     /* Query the maximum number of threads */
@@ -1860,6 +1873,7 @@ void __kmp_runtime_initialize(void) {
       __kmp_sys_min_stksize = KMP_MIN_STKSIZE;
     }
   }
+#endif
 
   /* Set up minimum number of threads to switch to TLS gtid */
   __kmp_tls_gtid_min = KMP_TLS_GTID_MIN;
