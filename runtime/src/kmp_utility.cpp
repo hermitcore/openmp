@@ -17,6 +17,10 @@
 #include "kmp_wrapper_getpid.h"
 #include <float.h>
 
+#if KMP_OS_HERMIT
+extern "C" int gethostname(char *name, size_t len);
+#endif
+
 static const char *unknown = "unknown";
 
 #if KMP_ARCH_X86 || KMP_ARCH_X86_64
