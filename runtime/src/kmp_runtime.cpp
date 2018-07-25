@@ -1825,7 +1825,7 @@ int __kmp_fork_call(ident_t *loc, int gtid,
           if (ap) {
             for (i = argc - 1; i >= 0; --i)
 // TODO: revert workaround for Intel(R) 64 tracker #96
-#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
+#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && (KMP_OS_LINUX || KMP_OS_HERMIT)
               *argv++ = va_arg(*ap, void *);
 #else
               *argv++ = va_arg(ap, void *);
@@ -1849,7 +1849,7 @@ int __kmp_fork_call(ident_t *loc, int gtid,
           argv = args;
           for (i = argc - 1; i >= 0; --i)
 // TODO: revert workaround for Intel(R) 64 tracker #96
-#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
+#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && (KMP_OS_LINUX || KMP_OS_HERMIT)
             *argv++ = va_arg(*ap, void *);
 #else
           *argv++ = va_arg(ap, void *);
@@ -2159,7 +2159,7 @@ int __kmp_fork_call(ident_t *loc, int gtid,
 #endif /* OMP_40_ENABLED */
       for (i = argc - 1; i >= 0; --i) {
 // TODO: revert workaround for Intel(R) 64 tracker #96
-#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
+#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && (KMP_OS_LINUX || KMP_OS_HERMIT)
         void *new_argv = va_arg(*ap, void *);
 #else
       void *new_argv = va_arg(ap, void *);
