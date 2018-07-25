@@ -1409,7 +1409,7 @@ int __kmp_fork_call(ident_t *loc, int gtid,
                     enum fork_context_e call_context, // Intel, GNU, ...
                     kmp_int32 argc, microtask_t microtask, launch_t invoker,
 /* TODO: revert workaround for Intel(R) 64 tracker #96 */
-#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
+#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && (KMP_OS_LINUX || KMP_OS_HERMIT)
                     va_list *ap
 #else
                     va_list ap
@@ -1526,7 +1526,7 @@ int __kmp_fork_call(ident_t *loc, int gtid,
       argv = (void **)parent_team->t.t_argv;
       for (i = argc - 1; i >= 0; --i)
 /* TODO: revert workaround for Intel(R) 64 tracker #96 */
-#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
+#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && (KMP_OS_LINUX || KMP_OS_HERMIT)
         *argv++ = va_arg(*ap, void *);
 #else
         *argv++ = va_arg(ap, void *);
@@ -1730,7 +1730,7 @@ int __kmp_fork_call(ident_t *loc, int gtid,
     /* create a serialized parallel region? */
     if (nthreads == 1) {
 /* josh todo: hypothetical question: what do we do for OS X*? */
-#if KMP_OS_LINUX &&                                                            \
+#if (KMP_OS_LINUX || KMP_OS_HERMIT) &&                                                            \
     (KMP_ARCH_X86 || KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64)
       void *args[argc];
 #else

@@ -300,7 +300,7 @@ void __kmpc_fork_call(ident_t *loc, kmp_int32 argc, kmpc_micro microtask, ...) {
                     VOLATILE_CAST(microtask_t) microtask, // "wrapped" task
                     VOLATILE_CAST(launch_t) __kmp_invoke_task_func,
 /* TODO: revert workaround for Intel(R) 64 tracker #96 */
-#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
+#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && (KMP_OS_LINUX || KMP_OS_HERMIT)
                     &ap
 #else
                     ap
@@ -388,7 +388,7 @@ void __kmpc_fork_teams(ident_t *loc, kmp_int32 argc, kmpc_micro microtask,
                   VOLATILE_CAST(microtask_t)
                       __kmp_teams_master, // "wrapped" task
                   VOLATILE_CAST(launch_t) __kmp_invoke_teams_master,
-#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
+#if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && (KMP_OS_LINUX || KMP_OS_HERMIT)
                   &ap
 #else
                   ap
@@ -2676,7 +2676,7 @@ void __kmpc_unset_lock(ident_t *loc, kmp_int32 gtid, void **user_lock) {
 
   if ((__kmp_user_lock_kind == lk_tas) &&
       (sizeof(lck->tas.lk.poll) <= OMP_LOCK_T_SIZE)) {
-#if KMP_OS_LINUX &&                                                            \
+#if (KMP_OS_LINUX || KMP_OS_HERMIT) &&                                                            \
     (KMP_ARCH_X86 || KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64)
 // "fast" path implemented to fix customer performance issue
 #if USE_ITT_BUILD
@@ -2770,7 +2770,7 @@ void __kmpc_unset_nest_lock(ident_t *loc, kmp_int32 gtid, void **user_lock) {
   if ((__kmp_user_lock_kind == lk_tas) &&
       (sizeof(lck->tas.lk.poll) + sizeof(lck->tas.lk.depth_locked) <=
        OMP_NEST_LOCK_T_SIZE)) {
-#if KMP_OS_LINUX &&                                                            \
+#if (KMP_OS_LINUX || KMP_OS_HERMIT) &&                                                            \
     (KMP_ARCH_X86 || KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64)
     // "fast" path implemented to fix customer performance issue
     kmp_tas_lock_t *tl = (kmp_tas_lock_t *)user_lock;
