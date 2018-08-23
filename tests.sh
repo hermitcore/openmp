@@ -8,7 +8,7 @@ export DEBIAN_FRONTEND="noninteractive"
 apt-get -qq update || exit 1
 apt-get install -y --no-install-recommends checkinstall cmake || exit 1
 
-echo "deb [trusted=yes] http://dl.bintray.com/hermitcore/ubuntu bionic main" >> /etc/apt/sources.list
+echo "deb [trusted=yes] http://dl.bintray.com/hermitcore/$OS_NAME $OS_VERSION main" >> /etc/apt/sources.list
 apt-get -qq update || exit 1
 apt-get install -y --allow-unauthenticated binutils-hermit gcc-hermit newlib-hermit pte-hermit libhermit libmpfr-dev libmpc-dev libgmp-dev libisl-dev || exit 1
 export PATH=/opt/hermit/bin:$PATH
