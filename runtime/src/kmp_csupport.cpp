@@ -302,6 +302,8 @@ void __kmpc_fork_call(ident_t *loc, kmp_int32 argc, kmpc_micro microtask, ...) {
 /* TODO: revert workaround for Intel(R) 64 tracker #96 */
 #if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
                     &ap
+#elif KMP_ARCH_AARCH64 && KMP_OS_HERMIT
+		    &ap
 #else
                     ap
 #endif
@@ -390,6 +392,8 @@ void __kmpc_fork_teams(ident_t *loc, kmp_int32 argc, kmpc_micro microtask,
                   VOLATILE_CAST(launch_t) __kmp_invoke_teams_master,
 #if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
                   &ap
+#elif KMP_ARCH_AARCH64 && KMP_OS_HERMIT
+		  &ap
 #else
                   ap
 #endif

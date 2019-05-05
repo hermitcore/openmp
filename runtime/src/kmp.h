@@ -3446,6 +3446,8 @@ extern int __kmp_fork_call(ident_t *loc, int gtid,
 /* TODO: revert workaround for Intel(R) 64 tracker #96 */
 #if (KMP_ARCH_ARM || KMP_ARCH_X86_64 || KMP_ARCH_AARCH64) && KMP_OS_LINUX
                            va_list *ap
+#elif KMP_ARCH_AARCH64 && KMP_OS_HERMIT
+                           va_list *ap
 #else
                            va_list ap
 #endif

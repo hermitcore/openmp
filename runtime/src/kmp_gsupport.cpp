@@ -378,6 +378,8 @@ static
                        __kmp_invoke_task_func,
 #if (KMP_ARCH_X86_64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64) && KMP_OS_LINUX
                        &ap
+#elif KMP_ARCH_AARCH64 && KMP_OS_HERMIT
+		       &ap
 #else
                        ap
 #endif
